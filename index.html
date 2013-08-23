@@ -3,21 +3,28 @@
 <head>
     <title>Greensock lab</title>
 
-    <script src="js/libs/jquery.min.js"></script>
-    <script src="js/libs/TweenMax.min.js"></script>
-    <script src="js/libs/CSSRulePlugin.min.js"></script>
-    <script src="js/libs/ColorPropsPlugin.min.js"></script>
-    <script src="js/libs/EaselPlugin.min.js"></script>
-    <script src="js/libs/TextPlugin.min.js"></script>
-    <script src="js/libs/ScrollToPlugin.min.js"></script>
-    <script src="js/libs/KineticPlugin.min.js"></script>
-    <script src="js/libs/Draggable.min.js"></script>
+    <script src="js/libs/jquery.js"></script>
+    <script src="js/greensock/TweenMax.js"></script>
+    <style type="text/css">
+        .draggable {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: -moz-none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .active {
+            background-color: red;
+        }
+    </style>
 </head>
 <body>
 
 <div id="container" style="position: relative">
 
-    <div class="list">
+    <div class="draggable droppable">
         <ul>
             <li>One</li>
             <li>Two</li>
@@ -26,7 +33,7 @@
         </ul>
     </div>
 
-    <div class="list">
+    <div class="droppable draggable">
         <ul>
             <li>Five</li>
             <li>Six</li>
@@ -35,58 +42,94 @@
         </ul>
     </div>
 
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
 </div>
 
 
 <script type="text/javascript">
-    var gridWidth = 200;
-    var gridHeight = 100;
-
-    var liList = $('.list li');
-
-    Draggable.create(".list li",
-            {
-                type: "y",
-                edgeResistance: 0.1,
-                throwProps:true,
-                bounds: $("#container"),
-                snap: {
-                    x: function (endValue) {
-                        console.log(endValue, this);
-                        return Math.max(this.xMin, Math.min(this.xMax, Math.round(endValue / gridWidth) * gridWidth));
-                    },
-                    y: function (endValue) {
-                        return Math.max(this.yMin, Math.min(this.yMax, Math.round(endValue / gridHeight) * gridHeight));
-                    }
-                },
-                onDragStart:function(){
-
-                },
-                onDragEnd:function(liList){
-                    var draggedLi = $(this.target);
-                    var offset = draggedLi.offset();
+    //TweenMax.allTo('div', 3, {backgroundColor:'red'})
 
 
-                    var targetLi;
-                    liList.each(function(index, element){
-                        var el = $(element);
-                        var curOffset = el.offset();
-                        if(curOffset.top > offset.top){
-                            targetLi =  el;
-                            return false;
-                        }
-                    });
 
-                    if(targetLi){
-                        draggedLi.insertAfter(targetLi);
-                    }
-                    //this.y=0;
-                    this.target._gsTransform.y=0;
+    $('.draggable li').on('mousedown',function(e){
+        var tempId = new Date().getTime();
+        var li = $(this);
+        var body = $('body');
+        li.css({
+            opacity:0.5
+        })
+        var dropppable;
+        var proxy = $('<div style="position:absolute"></div>');
+        proxy.append(li.html());
+        proxy.css({
+            top: e.clientY,
+            left: e.clientX
+        })
+        proxy.appendTo(body);
 
-                },
-                onDragEndParams:[liList]
-            }
-    );
+        proxy.on('mousemove.'+tempId,function(e){
+            proxy.css({
+                top: e.clientY,
+                left: e.clientX
+            })
+
+            $('.droppable li').on('mouseover.'+tempId, function(){
+                li.insertAfter(this);
+            });
+        });
+        body.on('mousemove.'+tempId,function(e){
+            proxy.css({
+                top: e.clientY,
+                left: e.clientX
+            })
+        });
+
+        body.on('mouseup',function(){
+            li.off('mousemove.'+tempId);
+            $('.droppable li').off('mouseover.'+tempId);
+            TweenMax.to(li, 1, {opacity:1});
+
+            proxy.remove();
+        });
+
+
+
+    });
 </script>
 
 </body>
