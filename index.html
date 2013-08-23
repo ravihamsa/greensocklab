@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Greensock lab</title>
+
+    <script src="js/libs/jquery.min.js"></script>
+    <script src="js/libs/TweenMax.min.js"></script>
+    <script src="js/libs/CSSRulePlugin.min.js"></script>
+    <script src="js/libs/ColorPropsPlugin.min.js"></script>
+    <script src="js/libs/EaselPlugin.min.js"></script>
+    <script src="js/libs/TextPlugin.min.js"></script>
+    <script src="js/libs/ScrollToPlugin.min.js"></script>
+    <script src="js/libs/KineticPlugin.min.js"></script>
+    <script src="js/libs/Draggable.min.js"></script>
+</head>
+<body>
+
+<div id="container" style="position: relative">
+
+    <div class="list">
+        <ul>
+            <li>One</li>
+            <li>Two</li>
+            <li>Three</li>
+            <li>Four</li>
+        </ul>
+    </div>
+
+    <div class="list">
+        <ul>
+            <li>Five</li>
+            <li>Six</li>
+            <li>Seven</li>
+            <li>Eight</li>
+        </ul>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    var gridWidth = 200;
+    var gridHeight = 100;
+
+    var liList = $('.list li');
+
+    Draggable.create(".list li",
+            {
+                type: "y",
+                edgeResistance: 0.1,
+                throwProps:true,
+                bounds: $("#container"),
+                snap: {
+                    x: function (endValue) {
+                        console.log(endValue, this);
+                        return Math.max(this.xMin, Math.min(this.xMax, Math.round(endValue / gridWidth) * gridWidth));
+                    },
+                    y: function (endValue) {
+                        return Math.max(this.yMin, Math.min(this.yMax, Math.round(endValue / gridHeight) * gridHeight));
+                    }
+                },
+                onDragStart:function(){
+
+                },
+                onDragEnd:function(liList){
+                    var draggedLi = $(this.target);
+                    var offset = draggedLi.offset();
+
+
+                    var targetLi;
+                    liList.each(function(index, element){
+                        var el = $(element);
+                        var curOffset = el.offset();
+                        if(curOffset.top > offset.top){
+                            targetLi =  el;
+                            return false;
+                        }
+                    });
+
+                    if(targetLi){
+                        draggedLi.insertAfter(targetLi);
+                    }
+                    //this.y=0;
+                    this.target._gsTransform.y=0;
+
+                },
+                onDragEndParams:[liList]
+            }
+    );
+</script>
+
+</body>
+</html>
