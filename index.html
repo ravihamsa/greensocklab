@@ -6,7 +6,7 @@
     <script src="js/libs/jquery.js"></script>
     <script src="js/greensock/TweenMax.js"></script>
     <style type="text/css">
-        .draggable {
+        .draggable, .droppable {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -24,7 +24,7 @@
 
 <div id="container" style="position: relative">
 
-    <div class="draggable droppable">
+    <div class="draggable">
         <ul>
             <li>One</li>
             <li>Two</li>
@@ -33,7 +33,7 @@
         </ul>
     </div>
 
-    <div class="droppable draggable">
+    <div class="droppable">
         <ul>
             <li>Five</li>
             <li>Six</li>
@@ -89,6 +89,7 @@
     $('.draggable li').on('mousedown',function(e){
         var tempId = new Date().getTime();
         var li = $(this);
+        var liClone = li.clone();
         var body = $('body');
         li.css({
             opacity:0.5
@@ -109,7 +110,8 @@
             })
 
             $('.droppable li').on('mouseover.'+tempId, function(){
-                li.insertAfter(this);
+
+                liClone.insertAfter(this);
             });
         });
         body.on('mousemove.'+tempId,function(e){
@@ -119,12 +121,14 @@
             })
         });
 
-        body.on('mouseup',function(){
+        body.on('mouseup.'+tempId,function(){
             li.off('mousemove.'+tempId);
             $('.droppable li').off('mouseover.'+tempId);
             TweenMax.to(li, 1, {opacity:1});
-
+            TweenMax.from(liClone, 1, {backgroundColor:'#ccc'});
             proxy.remove();
+
+            body.off('mouseup.'+tempId);
         });
 
 
